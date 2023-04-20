@@ -1,5 +1,7 @@
 import { Business } from '@prisma/client'
 import { BusinessRepository } from '@/repositories/business-repository'
+import { UsersRepository } from '@/repositories/users-repository'
+import { UserNotFoundError } from './errors/user-not-found'
 
 interface CreateBusunessUseCaseRequest {
   id?: string
@@ -14,7 +16,10 @@ interface CreateBusunessUseCaseResponse {
 }
 
 export class CreateBusinessUseCase {
-  constructor(private businessRepository: BusinessRepository) { }
+  constructor(
+    private businessRepository: BusinessRepository,
+    private usersRepository: UsersRepository,
+  ) { }
 
   async execute({
     description,
@@ -23,6 +28,12 @@ export class CreateBusinessUseCase {
     id,
     user_id,
   }: CreateBusunessUseCaseRequest): Promise<CreateBusunessUseCaseResponse> {
+    const user = await this.usersRepository.findById(user_id)
+
+    if (!user) {
+      throw new UserNotFoundError()
+    }
+
     const business = await this.businessRepository.create({
       id,
       title,

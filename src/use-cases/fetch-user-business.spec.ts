@@ -1,56 +1,77 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
-import { CreateBusinessUseCase } from './create-business'
 import { InMemoryBusinessRepository } from '@/repositories/in-memory/in-memory-business-repository'
 import { UserNotFoundError } from './errors/user-not-found'
+import { FetchUserBusiness } from './fetch-user-business'
 
 let inMemoryBusinessRepository: InMemoryBusinessRepository
 let inMemoryUserRepository: InMemoryUsersRepository
-let sut: CreateBusinessUseCase
+let sut: FetchUserBusiness
 
-describe('Create Business Use Case', () => {
+describe('Fetch user business Use Case', () => {
   beforeEach(() => {
     inMemoryBusinessRepository = new InMemoryBusinessRepository()
     inMemoryUserRepository = new InMemoryUsersRepository()
-    sut = new CreateBusinessUseCase(
+    sut = new FetchUserBusiness(
       inMemoryBusinessRepository,
       inMemoryUserRepository,
     )
   })
 
-  it('should able to create business', async () => {
+  it('should able to fetch user business', async () => {
     await inMemoryUserRepository.create({
-      id: 'user_01',
+      id: 'user-01',
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      password_hash: '123456',
+    })
+    await inMemoryUserRepository.create({
+      id: 'user-02',
       name: 'John Doe',
       email: 'johndoe@example.com',
       password_hash: '123456',
     })
 
-    const { business } = await sut.execute({
+    await inMemoryBusinessRepository.create({
       title: 'Lanchonet JS',
-      user_id: 'user_01',
+      user_id: 'user-02',
       description: null,
       phone: null,
     })
 
-    expect(business.id).toEqual(expect.any(String))
-    expect(business.user_id).toEqual('user_01')
+    await inMemoryBusinessRepository.create({
+      title: 'Lanchonet JS',
+      user_id: 'user-01',
+      description: null,
+      phone: null,
+    })
+
+    const { business } = await sut.execute({
+      userId: 'user-01',
+    })
+
+    expect(business).toHaveLength(1)
+    expect(business).toEqual([expect.objectContaining({ user_id: 'user-01' })])
   })
 
-  it('should not be ebla to create a business with non-existent user_id', async () => {
+  it('should not be eable to fetch a business with non-existent user_id', async () => {
     await inMemoryUserRepository.create({
-      id: 'user_01',
+      id: 'user-01',
       name: 'John Doe',
       email: 'johndoe@example.com',
       password_hash: '123456',
     })
 
+    await inMemoryBusinessRepository.create({
+      title: 'Lanchonet JS',
+      user_id: 'user-01',
+      description: null,
+      phone: null,
+    })
+
     await expect(async () => {
       await sut.execute({
-        title: 'Lanchonet JS',
-        user_id: 'user-id-not-found',
-        description: null,
-        phone: null,
+        userId: 'user-id-not-existe',
       })
     }).rejects.toBeInstanceOf(UserNotFoundError)
   })
