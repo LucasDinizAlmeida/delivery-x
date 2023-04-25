@@ -19,7 +19,7 @@ GymPass style app.
 - [x] Deve ser possível atualizar o status de um pedido;
 - [x] Deve ser possível deletar um usuário;
 - [x] Deve ser possível deletar um estabelecimento;
-- [x] Deve ser possível deletar usuário administrador; X
+- [x] Deve ser possível deletar usuário administrador;
 
 ## RNs (Regras de negócio)
 
@@ -28,8 +28,8 @@ GymPass style app.
 - [x] O historico de entregas do usuário deve vir paginado contendo 20 entregas por pagina;
 - [x] Associar um pedido á um entregador só pode ser feito pelo ADMIN ou MASTER 
 - [x] O estabelecimento só pode ser validado por administradores;
-- [x] Os usuários comuns só podem ser deletados pelo administrador ou pelo master; X
-- [x] Os administradores só podem ser deletados pelo master; X
+- [x] Os usuários comuns só podem ser deletados pelo administrador ou pelo master;
+- [x] Os administradores só podem ser deletados pelo master;
 
 ## RNFs (Requisitos não-funcionais)
 
