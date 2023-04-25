@@ -2,9 +2,11 @@ import { OrdersRepository } from '@/repositories/orders-repository'
 import { Order } from '@prisma/client'
 import { OrderNotFound } from './errors/order-not-found'
 
+export type Status = 'pending' | 'inTransit' | 'delivered' | 'canceled'
+
 interface UpdateOrderStatusRequest {
   order_id: string
-  status: 'pending' | 'inTransit' | 'delivered' | 'canceled'
+  status: Status
 }
 
 interface UpdateOrderStatusResponse {

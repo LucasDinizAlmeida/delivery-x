@@ -12,6 +12,7 @@ export class DeleteBusinessUseCase {
     const businessAlreadyExists = await this.businessRepository.findById(id)
 
     if (!businessAlreadyExists) {
+      console.log('entrou aqui')
       throw new BusinessNotFound()
     }
 

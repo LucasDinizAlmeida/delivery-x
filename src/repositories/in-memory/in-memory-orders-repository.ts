@@ -12,7 +12,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
       created_at: new Date(),
       business_id: data.business_id,
       status: 'pending',
-      userId: null,
+      userId: data.userId ?? null,
     }
 
     this.orders.push(order)
@@ -36,5 +36,19 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     }
 
     return order
+  }
+
+  async findManyByUserId(userId: string, page: number): Promise<Order[]> {
+    const orders = this.orders
+      .filter((item) => item.userId === userId)
+      .slice((page - 1) * 20, page * 20)
+
+    return orders
+  }
+
+  async countByUserId(userId: string): Promise<number> {
+    const userOrders = this.orders.filter((item) => item.userId === userId)
+
+    return userOrders.length
   }
 }
